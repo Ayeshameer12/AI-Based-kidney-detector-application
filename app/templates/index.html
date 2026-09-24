@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kidney Image Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="scan-grid"></div>
+
+  <header class="site-header">
+    <span class="mark">Kidney Image Analysis</span>
+  </header>
+
+  <main class="hero">
+    <div class="hero-text">
+      <h1>Upload a scan. See what the model sees.</h1>
+      <p class="lede">
+        This tool analyzes a kidney CT image and flags whether it looks normal or shows
+        signs of an abnormality, then shows exactly which region influenced that call.
+      </p>
+    </div>
+
+    {% if error %}
+      <div class="error-banner">{{ error }}</div>
+    {% endif %}
+
+    <form class="upload-card" action="/predict" method="post" enctype="multipart/form-data" id="uploadForm">
+      <label for="imageInput" class="dropzone" id="dropzone">
+        <input type="file" name="image" id="imageInput" accept=".jpg,.jpeg,.png" required>
+        <div class="dropzone-content" id="dropzoneContent">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <path d="M20 6V26M20 6L13 13M20 6L27 13" stroke="#163832" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 28V31C6 32.6569 7.34315 34 9 34H31C32.6569 34 34 32.6569 34 31V28" stroke="#163832" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <p><strong>Choose an image</strong> or drag it here</p>
+          <p class="hint">JPG or PNG · single kidney CT scan</p>
+        </div>
+        <img id="preview" class="preview-img" alt="">
+      </label>
+      <button type="submit" class="analyze-btn">Analyze image</button>
+    </form>
+
+    <p class="disclaimer">
+      Academic research tool — not a certified diagnostic device. Always consult a
+      qualified radiologist for clinical decisions.
+    </p>
+  </main>
+
+  <script>
+    const input = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
+    const content = document.getElementById('dropzoneContent');
+
+    input.addEventListener('change', () => {
+      const file = input.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+        content.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

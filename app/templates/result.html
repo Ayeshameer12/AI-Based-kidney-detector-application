@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Result — Kidney Image Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="scan-grid"></div>
+
+  <header class="site-header">
+    <a href="/" class="mark">Kidney Image Analysis</a>
+  </header>
+
+  <main class="result-wrap">
+    <div class="verdict-card verdict-{{ 'abnormal' if result.label == 'Abnormal' else 'normal' }}">
+      <span class="verdict-label">{{ result.label }}</span>
+      <span class="verdict-confidence">{{ result.confidence }}% confidence</span>
+    </div>
+
+    <div class="images-row">
+      <figure>
+        <img src="{{ result.original_url }}" alt="Original scan">
+        <figcaption>Original image</figcaption>
+      </figure>
+      {% if result.heatmap_url %}
+      <figure>
+        <img src="{{ result.heatmap_url }}" alt="Grad-CAM heatmap">
+        <figcaption>Model attention (Grad-CAM)</figcaption>
+      </figure>
+      {% endif %}
+    </div>
+
+    <p class="explainer">
+      The highlighted region on the heatmap shows which part of the image most influenced
+      this prediction — warmer colors mean the model paid closer attention there.
+    </p>
+
+    <div class="actions">
+      <a href="/report/{{ result.session_id }}" class="analyze-btn">Download PDF report</a>
+      <a href="/" class="secondary-link">Analyze another image</a>
+    </div>
+
+    <p class="disclaimer">
+      Generated on {{ result.timestamp }} — academic research tool, not a certified
+      diagnostic device.
+    </p>
+  </main>
+</body>
+</html>
